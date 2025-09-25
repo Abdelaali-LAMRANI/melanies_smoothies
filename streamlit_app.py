@@ -19,9 +19,13 @@ session = cnx.session()
 my_dataframe = session.table("smoothies.public.fruit_options").select(col('FRUIT_NAME'))
 #st.dataframe(data=my_dataframe, use_container_width=True)
 #st.stop()
-pd_df = my_dataframe.to_pandas()
-st.dataframe(pd_df)
-st.stop()
+# Debug + safe convert
+try:
+    pd_df = my_dataframe.limit(50).to_pandas()
+    st.dataframe(pd_df)
+except Exception as e:
+    st.error(f"Failed to load fruit options: {e}")
+    st.stop()
 ingredients_list = st.multiselect(
     'Choose up to 5 ingredients :'
     , my_dataframe
